@@ -1,0 +1,11 @@
+:root{
+    --bg-primary: #696363;
+    --text-primary: #ece9e9;
+    --size: 40px;
+}
+
+.heading2{
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: var(--size);
+}
