@@ -9,6 +9,41 @@ const Cart = () =>{
         setCartItems(productsInCart)
         console.log(productsInCart)
     }, [])
+
+    const increaseQty=id=>{
+        const updatedCartItems=cartItems.map(item =>{
+            if(item.id===id){
+                // item.quantity+=1
+                return{...item, quantity:item.quantity+1}
+            }
+            return item
+        })
+
+        setCartItems(updatedCartItems)
+        localStorage.setItem("cartItemsKey", JSON.stringify(cartItems))
+    }
+    const decreaseQty=id=>{
+        const updatedCartItems=cartItems.map(item =>{
+            if(item.id===id && item.quantity>1){
+                // item.quantity+=1
+                return{...item, quantity:item.quantity-1}
+            }
+            return item
+        })
+
+        setCartItems(updatedCartItems)
+        localStorage.setItem("cartItemsKey", JSON.stringify(cartItems))
+    }
+
+    const deleteItem= id=>{
+        const hasConfirmed=window.confirm("Did you want really remove!")
+        if(hasConfirmed){
+            const filteredItems=cartItems.filter(item=>item.id !==id)
+            setCartItems(filteredItems)
+            localStorage.setItem("cartItemsKey", JSON.stringify)
+            toast.error("Product remove from the card")
+        }
+    }
     return (
         <>
         <ToastContainer theme="colored" position="bottom-center" />
@@ -33,23 +68,23 @@ const Cart = () =>{
                                                 <p className="text-bold">{item.title}</p>
                                             </div>
                                             <div className="col-1">
-                                                <strong>${item.price}</strong>
+                                                <strong>${item.quantity*item.price}</strong>
                                             </div>
                                             
                                             <div className="col-3">
                                                 <div className="d-flex align-items-center">
-                                                    <button className="btn btn-danger">-</button>
+                                                    <button className="btn btn-danger" onClick={()=>decreaseQty(item.id)}>-</button>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <strong>{item.quantity}</strong>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <button className="btn btn-success">+</button>
+                                                    <button className="btn btn-success" onClick={()=>increaseQty(item.id)}>+</button>
                                                 </div>
                                             
                                             </div>
                                               
-                                            <div className="col-1">
-                                                <FaTrash className="text-muted h5"/>
-                                            </div>
+                                            <button className="col-1 border-0 .bg-transparent">
+                                                <FaTrash onClick={()=>deleteItem(item.id)} className="text-muted h5"/>
+                                            </button>
                                         </div>
                                         <hr/>
                                     </Fragment>
@@ -61,8 +96,8 @@ const Cart = () =>{
                                 <div className="p-2">
                                     <h5>Cart Summary</h5>
                                     <hr/>
-                                    <p><strong>Units: </strong></p>
-                                    <p><strong>Total Price:</strong></p>
+                                    <p><strong>Units: {cartItems.reduce((acc,curr)=>acc+curr.quantity, 0)}</strong></p>
+                                    <p><strong>Total Price:{cartItems.reduce((acc,item)=>acc+item.quantity*item.price,0)}</strong></p>
                                     <button className="btn btn-warning">Checkout</button>
                                 </div>
 
