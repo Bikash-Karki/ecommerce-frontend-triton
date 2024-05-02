@@ -9,6 +9,43 @@ const Cart = () =>{
         setCartItems(productsInCart)
         console.log(productsInCart)
     }, [])
+
+    const increaseQty = id => {
+        const updatedCartItems = cartItems.map(item => {
+            if(item.id === id){
+                return {...item, quantity:item.quantity+1}
+            }
+            return item
+        })
+        setCartItems(updatedCartItems)
+        localStorage.setItem("cartItemsKey", JSON.stringify(cartItems))
+    }
+
+    const decreaseQty = id => {
+        const updatedCartItems = cartItems.map(item => {
+            if (item.id === id && item.quantity>1) {
+                return { ...item, quantity: item.quantity - 1 }
+            }
+            return item
+        })
+        setCartItems(updatedCartItems)
+        localStorage.setItem("cartItemsKey", JSON.stringify(cartItems))
+    }
+
+    const removeItem = id => {
+        const hasConfirmed = window.confirm("Are you sure you want to remove this product from your cart!")
+        if(hasConfirmed){
+            const filteredItems = cartItems.filter(item => item.id !==id)
+            setCartItems(filteredItems)
+            localStorage.setItem("cartItemsKey", JSON.stringify(cartItems))
+            toast.error("Product removed from the cart")
+        }
+
+
+    }
+
+
+
     return (
         <>
         <ToastContainer theme="colored" position="bottom-center" />
@@ -33,22 +70,22 @@ const Cart = () =>{
                                                 <p className="text-bold">{item.title}</p>
                                             </div>
                                             <div className="col-1">
-                                                <strong>${item.price}</strong>
+                                                <strong>${item.price * item.quantity}</strong>
                                             </div>
                                             
                                             <div className="col-3">
                                                 <div className="d-flex align-items-center">
-                                                    <button className="btn btn-danger">-</button>
+                                                    <button className="btn btn-danger" onClick={()=>decreaseQty(item.id)}>-</button>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <strong>{item.quantity}</strong>
                                                     &nbsp;&nbsp;&nbsp;&nbsp;
-                                                    <button className="btn btn-success">+</button>
+                                                    <button className="btn btn-success" onClick={()=>increaseQty(item.id)}>+</button>
                                                 </div>
                                             
                                             </div>
                                               
                                             <div className="col-1">
-                                                <FaTrash className="text-muted h5"/>
+                                                <button className="btn btn-danger" onClick={()=>removeItem(item.id)}><FaTrash/></button>
                                             </div>
                                         </div>
                                         <hr/>
@@ -61,8 +98,8 @@ const Cart = () =>{
                                 <div className="p-2">
                                     <h5>Cart Summary</h5>
                                     <hr/>
-                                    <p><strong>Units: </strong></p>
-                                    <p><strong>Total Price:</strong></p>
+                                            <p><strong>Units: {cartItems.reduce((acc, item) => acc + item.quantity, 0)}  </strong>Units</p>
+                                    <p><strong>Total Price:$ {cartItems.reduce((acc, item)=>acc + (item.price * item.quantity) ,0)}</strong></p>
                                     <button className="btn btn-warning">Checkout</button>
                                 </div>
 
